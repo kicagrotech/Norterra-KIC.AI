@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>מהפכת הבינה המלאכותית - נורטרה בשיתוף מרכז כנרת לחדשנות</title>
+    <meta name="title" content="מהפכת הבינה המלאכותית - נורטרה בשיתוף מרכז כנרת לחדשנות">
+    <meta name="description" content="הטמעת בינה מלאכותית (AI) בארגונים בצורה בטוחה ופרקטית. נורטרה ומרכז כנרת לחדשנות מציעים ליווי אסטרטגי לייעול תהליכי עבודה, הרצאות וסדנאות מעשיות.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-[#F6F8FB]">
+    <div id="root">
+        <!-- מסך טעינה -->
+        <div style="display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; gap:20px;">
+           <div style="width:60px; height:60px; border:5px solid #14B8A6; border-top:5px solid transparent; border-radius:50%; animation:spin 1s linear infinite;"></div>
+           <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+           <h2 style="color:#0B1F3B; font-family:sans-serif; font-weight:bold; font-size:1.5rem; margin-top:10px;">טוען את סביבת הפעילות המשותפת...</h2>
+        </div>
+    </div>
+
+    <!-- React App -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
+        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+        import { 
+          CheckCircle2, XCircle, ArrowLeft, Play, Shield, 
+          BrainCircuit, Target, Zap, FileText, Users, 
+          BarChart, Sparkles, ChevronDown, Menu, X, Check, Map, Compass, Rocket, Layers, Bot, Calendar, MessageCircle, Building2, Briefcase, Landmark
+        } from 'https://esm.sh/lucide-react@0.292.0';
+
+        // --- Configuration & Branding ---
+        const COLORS = {
+          navy: '#0B1F3B',
+          blue: '#0F5B9A',
+          teal: '#14B8A6',
+          orange: '#F59E0B',
+          bg: '#F6F8FB',
+          text: '#111827',
+          border: '#E5E7EB'
+        };
+
+        const LOGOS = {
+          kic: "https://static.wixstatic.com/media/4aa83a_8834f96f383f4ae0b877d496085d8053~mv2.png",
+          norterra: "https://cdn.prod.website-files.com/674c40336541130c2b7a4bb5/675029ff52a299be92cf3f2a_41381d022025f2a9e71734ea2c2aebf9_Norterra%20OpenGraph.png"
+        };
+
+        const CALENDAR_LINK = "https://zcal.co/i/yRLODBfm";
+
+        // --- Custom Styles ---
+        const customStyles = `
+          @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap');
+          
+          body {
+            font-family: 'Heebo', sans-serif;
+            direction: rtl;
+            background-color: ${COLORS.bg};
+            color: ${COLORS.text};
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+          }
+
+          .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to left, ${COLORS.teal}, ${COLORS.blue});
+          }
+          
+          .bg-gradient-primary {
+            background: linear-gradient(135deg, ${COLORS.navy} 0%, #081426 100%);
+          }
+
+          .cta-shadow {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: soft-pulse 3s infinite;
+          }
+          
+          .cta-shadow:hover {
+            box-shadow: 0 0 35px rgba(245, 158, 11, 0.8);
+            transform: translateY(-3px);
+            animation: none;
+          }
+
+          @keyframes soft-pulse {
+            0% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.6); }
+            100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+          }
+
+          .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(11, 31, 59, 0.08);
+            border-color: ${COLORS.teal};
+          }
+
+          .tech-grid {
+            background-image: linear-gradient(rgba(20, 184, 166, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(20, 184, 166, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+          }
+
+          .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.5, 0, 0, 1), transform 0.8s cubic-bezier(0.5, 0, 0, 1);
+          }
+          
+          .reveal-visible {
+            opacity: 1;
+            transform: translateY(0);
+          }
+
+          .float-anim {
+            animation: float 6s ease-in-out infinite;
+          }
+          
+          .float-anim-delayed {
+            animation: float 8s ease-in-out infinite alternate;
+          }
+
+          @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+          }
+
+          .gallery-img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .gallery-container:hover .gallery-img {
+            transform: scale(1.08);
+          }
+
+          .trust-logo {
+            filter: grayscale(100%) opacity(50%);
+            transition: all 0.3s ease;
+          }
+          .trust-logo:hover {
+            filter: grayscale(0%) opacity(100%);
+          }
+        `;
+
+        // --- Shared Components ---
+
+        const FadeIn = ({ children, delay = 0, className = '' }) => {
+          const [isVisible, setIsVisible] = useState(false);
+          const domRef = useRef();
+
+          useEffect(() => {
+            const observer = new IntersectionObserver(entries => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  setIsVisible(true);
+                  observer.unobserve(entry.target);
+                }
+              });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+            
+            const currentRef = domRef.current;
+            if (currentRef) observer.observe(currentRef);
+            return () => { if (currentRef) observer.unobserve(currentRef); };
+          }, []);
+
+          return (
+            <div ref={domRef} className={`reveal-up ${isVisible ? 'reveal-visible' : ''} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+              {children}
+            </div>
+          );
+        };
+
+        const ButtonPrimary = ({ children, onClick, className = '' }) => (
+          <button 
+            onClick={onClick}
+            className={`bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-4 px-8 rounded-lg cta-shadow text-lg flex items-center justify-center gap-3 w-full md:w-auto ${className}`}
+          >
+            {children}
+          </button>
+        );
+
+        const ButtonSecondary = ({ children, onClick, className = '' }) => (
+          <button 
+            onClick={onClick}
+            className={`bg-transparent border-2 border-[#14B8A6] text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 text-lg flex items-center justify-center ${className}`}
+          >
+            {children}
+          </button>
+        );
+
+        const SectionTitle = ({ title, subtitle, isDark = false }) => (
+          <FadeIn className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className={`text-4xl md:text-5xl font-extrabold mb-6 ${isDark ? 'text-white' : 'text-[#0B1F3B]'}`}>
+              {title}
+            </h2>
+            {subtitle && (
+              <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                {subtitle}
+              </p>
+            )}
+          </FadeIn>
+        );
+
+        // --- Main App Component ---
+        function App() {
+          const [currentPage, setCurrentPage] = useState('home'); 
+          const [isMenuOpen, setIsMenuOpen] = useState(false);
+          const [activeFaq, setActiveFaq] = useState(null);
+
+          // Routing Handlers
+          const handleCalendarClick = () => {
+            window.open(CALENDAR_LINK, '_blank');
+          };
+
+          const handleWhatsAppClick = (customMessage) => {
+            const phoneNumber = "972506915269"; 
+            const defaultMessage = "היי טל, הגעתי דרך האתר המשותף עם נורטרה. אשמח לתאם שיחת איפיון קצרה לארגון שלי.";
+            const message = typeof customMessage === 'string' ? customMessage : defaultMessage;
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+          };
+
+          const handleNavClick = (sectionId) => {
+            setIsMenuOpen(false);
+            if (currentPage !== 'home') {
+              setCurrentPage('home');
+              setTimeout(() => {
+                const el = document.getElementById(sectionId);
+                if (el) {
+                  const yOffset = -80;
+                  const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+              }, 150);
+            } else {
+              const el = document.getElementById(sectionId);
+              if (el) {
+                const yOffset = -80;
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+              } else if (sectionId === 'home-top') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }
+          };
+
+          useEffect(() => {
+            if (currentPage === 'offer') window.scrollTo(0, 0);
+          }, [currentPage]);
+
+          // --- Views ---
+
+          const OfferView = () => (
+            <div className="min-h-screen bg-[#F6F8FB] pt-32 pb-20">
+              <div className="container mx-auto px-4 max-w-4xl">
+                <FadeIn>
+                  <div className="text-center mb-12">
+                    <div className="inline-block bg-teal-100 text-[#14B8A6] font-bold px-4 py-1 rounded-full text-sm mb-6 float-anim">
+                      הטבה ללקוחות נורטרה: פגישת מיפוי ללא עלות
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-[#0B1F3B] mb-6 leading-tight">
+                      AI Opportunity Scan <br/>
+                      <span className="text-gradient">שיחת אסטרטגיה ומיפוי</span>
+                    </h1>
+                    <p className="text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+                      לקוחות נורטרה, במקום לשחק בכלים, בואו נדבר ביזנס. השקעה של 30 דקות מזמנכם כדי שנבין את הצרכים העסקיים שלכם, ונבנה יחד כיוון ברור ובטוח לאימוץ AI בארגון.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100">
+                    <div className="space-y-8 mb-10">
+                      <h3 className="font-bold text-[#0B1F3B] text-2xl mb-6 flex items-center gap-3 border-b pb-4">
+                        <Compass className="text-[#F59E0B] w-8 h-8" /> מה יקרה בפגישה?
+                      </h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                        <div className="hidden md:block absolute top-6 left-12 right-12 h-0.5 bg-gray-100 z-0"></div>
+                        
+                        <div className="relative z-10 bg-white p-4 text-center rounded-xl border border-gray-50 shadow-sm">
+                          <div className="w-12 h-12 rounded-full bg-blue-50 text-[#0F5B9A] flex items-center justify-center font-bold text-xl mx-auto mb-4 border border-blue-100">1</div>
+                          <h4 className="font-bold text-[#0B1F3B] mb-2">מיקוד הצרכים</h4>
+                          <p className="text-sm text-gray-500">נשמע על הליבה העסקית והאתגרים בארגון שלכם.</p>
+                        </div>
+                        <div className="relative z-10 bg-white p-4 text-center rounded-xl border border-gray-50 shadow-sm">
+                          <div className="w-12 h-12 rounded-full bg-teal-50 text-[#14B8A6] flex items-center justify-center font-bold text-xl mx-auto mb-4 border border-teal-100">2</div>
+                          <h4 className="font-bold text-[#0B1F3B] mb-2">זיהוי הזדמנויות</h4>
+                          <p className="text-sm text-gray-500">נמפה צווארי בקבוק שניתן לייעל משמעותית בעזרת AI.</p>
+                        </div>
+                        <div className="relative z-10 bg-white p-4 text-center rounded-xl border border-gray-50 shadow-sm">
+                          <div className="w-12 h-12 rounded-full bg-orange-50 text-[#F59E0B] flex items-center justify-center font-bold text-xl mx-auto mb-4 border border-orange-100">3</div>
+                          <h4 className="font-bold text-[#0B1F3B] mb-2">מפת דרכים</h4>
+                          <p className="text-sm text-gray-500">המלצה מעשית לצעד הבא, מותאמת לאופי ולבטיחות הארגון.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#0B1F3B] text-white p-8 rounded-xl shadow-lg relative overflow-hidden text-center mb-10">
+                      <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-[#F59E0B] to-[#14B8A6]"></div>
+                      <h3 className="font-bold text-xl mb-3 text-[#14B8A6]">התחייבות לערך עסקי</h3>
+                      <p className="text-gray-300">
+                        הפגישה מיועדת למקבלי החלטות בארגונים. תצאו ממנה עם בהירות כיוונית והבנה טובה יותר של פוטנציאל ה-AI בארגון שלכם, ללא התחייבות מסחרית מצדכם.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4">
+                      <ButtonPrimary onClick={handleCalendarClick} className="w-full md:w-2/3 text-xl py-6">
+                        <Calendar className="w-6 h-6" /> קביעת פגישה ביומן (Zcal)
+                      </ButtonPrimary>
+                      <button onClick={() => handleWhatsAppClick()} className="text-gray-500 hover:text-[#14B8A6] font-medium flex items-center gap-2 transition-colors">
+                        <MessageCircle className="w-5 h-5" /> מעדיפים לתאם בוואטסאפ?
+                      </button>
+                    </div>
+                  </div>
+                </FadeIn>
+              </div>
+            </div>
+          );
+
+          const HomeView = () => (
+            <>
+              {/* Hero Section */}
+              <section id="home-top" className="relative pt-32 pb-20 md:pt-40 md:pb-24 bg-[#F6F8FB] overflow-hidden tech-grid border-b border-gray-200/60">
+                <div className="absolute top-[5%] left-[-5%] w-96 h-96 bg-[#14B8A6] rounded-full mix-blend-multiply filter blur-[100px] opacity-30 float-anim"></div>
+                <div className="absolute bottom-[5%] right-[-5%] w-96 h-96 bg-[#F59E0B] rounded-full mix-blend-multiply filter blur-[100px] opacity-30 float-anim-delayed"></div>
+
+                <div className="container mx-auto px-4 relative z-10">
+                  <div className="max-w-4xl mx-auto text-center">
+                    <FadeIn>
+                      <div className="inline-flex items-center gap-2 border border-[#14B8A6]/40 bg-teal-50/80 backdrop-blur-sm text-[#0F5B9A] font-bold px-5 py-2 rounded-full text-sm mb-8 shadow-sm tracking-wide">
+                        <Users className="w-4 h-4 text-[#14B8A6]" /> פעילות ה-GenAI המשותפת של נורטרה ומרכז כנרת לחדשנות
+                      </div>
+                      
+                      <h1 className="text-5xl md:text-7xl font-extrabold text-[#0B1F3B] mb-8 leading-tight tracking-tight">
+                        AI שעובר משיחה <br />
+                        <span className="text-gradient">לתוצאות עסקיות בארגון</span>
+                      </h1>
+                    </FadeIn>
+                    
+                    <FadeIn delay={200}>
+                      <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
+                        לקוחות נורטרה, בואו נמפה יחד את הצרכים העסקיים שלכם. בשיחת איפיון ממוקדת נבין את פעילות הארגון ונגדיר <strong className="text-[#0B1F3B]">מפת דרכים חכמה ומותאמת אישית</strong> לאימוץ בינה מלאכותית – בצורה בטוחה ומדידה.
+                      </p>
+                    </FadeIn>
+
+                    <FadeIn delay={400}>
+                      <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
+                        <ButtonPrimary onClick={() => setCurrentPage('offer')} className="text-xl px-8 py-5 w-full sm:w-auto">
+                          <Calendar className="w-6 h-6" /> תיאום פגישת אסטרטגיה
+                        </ButtonPrimary>
+                        <ButtonSecondary onClick={() => handleNavClick('products')} className="w-full sm:w-auto py-5 px-8">
+                          איך התהליך עובד?
+                        </ButtonSecondary>
+                      </div>
+                      
+                      <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-500 font-medium">
+                        <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-[#F59E0B]" /> פגישת מיפוי ראשונית כהטבה ללקוחות.</span>
+                        <span className="hidden sm:inline text-gray-300">•</span>
+                        <button onClick={() => handleWhatsAppClick()} className="flex items-center gap-1.5 hover:text-[#14B8A6] transition-colors">
+                          <MessageCircle className="w-4 h-4" /> מעדיפים קשר בוואטסאפ?
+                        </button>
+                      </div>
+                    </FadeIn>
+                  </div>
+                </div>
+              </section>
+
+              {/* Trusted By / Organizations Bar (B2B Focus) */}
+              <section className="bg-white py-10 border-b border-gray-100">
+                <div className="container mx-auto px-4 max-w-5xl text-center">
+                  <FadeIn delay={100}>
+                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">התמחות בהטמעה ללקוחות נורטרה וארגונים מובילים מכל המגזרים</p>
+                    <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+                      <div className="flex items-center gap-2 text-gray-500 font-bold text-lg trust-logo"><Building2 className="w-6 h-6" /> מגזר עסקי והייטק</div>
+                      <div className="flex items-center gap-2 text-gray-500 font-bold text-lg trust-logo"><Landmark className="w-6 h-6" /> מגזר ממשלתי וציבורי</div>
+                      <div className="flex items-center gap-2 text-gray-500 font-bold text-lg trust-logo"><Briefcase className="w-6 h-6" /> ארגונים וחברות מסורתיות</div>
+                    </div>
+                  </FadeIn>
+                </div>
+              </section>
+
+              {/* SECTION: About The Partners */}
+              <section className="py-24 bg-white relative overflow-hidden border-b border-gray-100">
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white to-[#F6F8FB]/50 z-0"></div>
+                <div className="container mx-auto px-4 max-w-5xl relative z-10">
+                  <SectionTitle 
+                    title="הכוח המשותף מאחורי ההצלחה שלכם" 
+                    subtitle="חיברנו את הניסיון העמוק והמקומי של נורטרה עם המומחיות של מרכז כנרת לחדשנות בבינה מלאכותית, כדי להעניק לכם פתרון שלם, בטוח ומקצועי."
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Norterra Card */}
+                    <FadeIn delay={100} className="bg-white p-10 rounded-2xl shadow-lg border border-gray-100 flex flex-col relative overflow-hidden card-hover">
+                      <div className="absolute top-0 right-0 w-2 h-full bg-[#0F5B9A]"></div>
+                      <img src={LOGOS.norterra} alt="Norterra" className="h-8 object-contain mb-6 self-start" />
+                      <h3 className="font-extrabold text-2xl text-[#0B1F3B] mb-4">חברת נורטרה (Norterra)</h3>
+                      <div className="text-gray-600 leading-relaxed text-lg space-y-4">
+                        <p>
+                          Norterra נולדה מתוך שנים של עשייה משמעותית בצפון בתחומי החדשנות, המחקר, התעשייה והאקדמיה. השחקנים המרכזיים הבינו שהם מתמודדים עם אתגר משותף: חברות הייטק נמנעות מהאזור בשל מחסור בכוח אדם, וההון האנושי המקומי עוזב להזדמנויות במרכז.
+                        </p>
+                        <p>
+                          מתוך האתגר הזה, נוצרה שותפות אסטרטגית רחבה והיסטורית שמחזקת ומקדמת את תעשיית ההיי-טק בצפון מזרח ישראל.
+                        </p>
+                        <div className="mt-6 p-4 bg-blue-50/50 rounded-xl border border-blue-100/50">
+                          <h4 className="font-bold text-[#0F5B9A] mb-2 flex items-center gap-2">
+                            <Target className="w-5 h-5" /> החזון
+                          </h4>
+                          <p className="text-base">
+                            להוביל את תחום ההייטק בצפון מזרח ישראל. להוות מרכז ידע ושירותים לקהילת ההייטק הצפונית ולמשוך חברות טכנולוגיה מובילות למרחב הפעילות, תוך כדי חיזוק ההון האנושי והסינרגיה העל-אזורית.
+                          </p>
+                        </div>
+                      </div>
+                    </FadeIn>
+
+                    {/* KIC Card */}
+                    <FadeIn delay={200} className="bg-white p-10 rounded-2xl shadow-lg border border-gray-100 flex flex-col relative overflow-hidden card-hover">
+                      <div className="absolute top-0 right-0 w-2 h-full bg-[#14B8A6]"></div>
+                      <img src={LOGOS.kic} alt="KIC" className="h-10 object-contain mb-6 self-start" />
+                      <h3 className="font-extrabold text-2xl text-[#0B1F3B] mb-4">מרכז כנרת לחדשנות (KIC)</h3>
+                      <div className="text-gray-600 leading-relaxed text-lg space-y-4">
+                        <p>
+                          המרכז הוקם בשנת 2018 על חופי הכנרת כשותפות אסטרטגית בין המכללה האקדמית כנרת, צמח מפעלים וקק"ל. המשימה שלנו היא לבנות כלכלה טכנולוגית מבוססת ידע בצפון ישראל, למשוך כישרונות ולייצר הזדמנויות תעסוקה.
+                        </p>
+                        <p>
+                          <strong>הכשרות AI - מעצימים ארגונים:</strong> בינה מלאכותית משנה את הדרך שבה ארגונים עובדים, אך צוותים מתקשים להפוך פוטנציאל ליישום יומיומי. אנו מציעים הכשרות וסדנאות AI מותאמות לצרכים העסקיים.
+                        </p>
+                        <div className="mt-6 p-4 bg-teal-50/50 rounded-xl border border-teal-100/50">
+                          <h4 className="font-bold text-[#14B8A6] mb-2 flex items-center gap-2">
+                            <Sparkles className="w-5 h-5" /> פרקטיקה בשטח
+                          </h4>
+                          <p className="text-base">
+                            הסדנאות מועברות על ידי אנשי מקצוע מנוסים עם הסמכות רלוונטיות, וממוקדות בהתנסות מעשית, הטמעה אחראית ושיפור פרודוקטיביות – מהנהלה שמחפשת בהירות אסטרטגית ועד צוותים המייעלים תהליכים בעזרת אוטומציה.
+                          </p>
+                        </div>
+                      </div>
+                    </FadeIn>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 1: The Problem */}
+              <section className="py-24 bg-[#F6F8FB]">
+                <div className="container mx-auto px-4 max-w-5xl">
+                  <SectionTitle 
+                    title="הבעיה אינה בטכנולוגיה. הבעיה היא באימוץ." 
+                    subtitle="כולם מדברים על הפוטנציאל של AI, אבל מעטים יודעים לבנות תהליכי עבודה שעובדים בפועל בסביבה ארגונית מורכבת."
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {[
+                      { title: "שימוש לא עקבי (Shadow AI)", desc: "העובדים משתמשים בכלים שונים בצורה עצמאית ונסתרת, ללא עקביות או מתודולוגיה סדורה." },
+                      { title: "חוסר בסטנדרט ואיכות", desc: "אין תהליכי Review או סטנדרט איכות לתוצרים המופקים מהכלים, מה שמקשה על הסתמכות עליהם." },
+                      { title: "סיכוני מידע ופרטיות", desc: "ללא גבולות מידע והנחיות ברורות (Governance), נוצר סיכון ממשי לחשיפת מידע ארגוני רגיש." },
+                      { title: "התלהבות בלי מדידה", desc: "יש סקרנות והתלהבות ראשונית מהכלים, אך ללא תהליך מסודר - אין אימוץ ארוך טווח ואין ROI (החזר השקעה)." }
+                    ].map((item, i) => (
+                      <FadeIn key={i} delay={i * 150} className="bg-white p-8 rounded-xl shadow-sm border border-red-50 flex items-start gap-5 hover:shadow-md transition-all">
+                        <XCircle className="w-8 h-8 text-red-500 shrink-0 mt-0.5" />
+                        <div>
+                          <h3 className="font-bold text-xl text-[#0B1F3B] mb-2">{item.title}</h3>
+                          <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </FadeIn>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 2: Outcomes */}
+              <section className="py-24 bg-white relative overflow-hidden">
+                <div className="absolute right-0 top-0 w-1/3 h-full bg-[#14B8A6]/5 -skew-x-12 transform origin-top"></div>
+                <div className="container mx-auto px-4 max-w-5xl relative z-10">
+                  <SectionTitle 
+                    title="מה תרוויחו מהטמעה אסטרטגית" 
+                    subtitle="המעבר מ'גימיק' לתוצאות עסקיות משמעותיות שמייעלות את שורת הרווח ושגרת העבודה."
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {[
+                      { icon: Zap, title: "ייעול תהליכים שוחקים", desc: "קיצור דרמטי של זמני יצירת מסמכים, איסוף נתונים, וביצוע משימות רוטיניות של המחלקות השונות." },
+                      { icon: Target, title: "העלאת רף האיכות", desc: "יצירת תוצרים עסקיים מדויקים ומקיפים יותר, תוך ביסוס תהליכי בקרה (Review) קבועים ואוטומטיים." },
+                      { icon: Shield, title: "עבודה בטוחה ונשלטת", desc: "הטמעה שמתאימה לרגולציה ולגבולות המידע המחמירים של הארגון, תוך מזעור סיכונים טכנולוגיים ומשפטיים." }
+                    ].map((item, i) => (
+                      <FadeIn key={i} delay={i * 100} className={`p-8 rounded-xl bg-[#F6F8FB] border border-gray-100 card-hover`}>
+                        <item.icon className="w-10 h-10 text-[#0F5B9A] mb-5 float-anim" />
+                        <h3 className="font-bold text-xl text-[#0B1F3B] mb-3">{item.title}</h3>
+                        <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                      </FadeIn>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 3: Use Cases Library */}
+              <section id="projects" className="py-24 bg-[#F6F8FB]">
+                <div className="container mx-auto px-4 max-w-6xl">
+                  <SectionTitle 
+                    title="איך נראית הטמעה מוצלחת?" 
+                    subtitle="הצצה לכיוונים עסקיים שאנו בוחנים ומשלבים בארגונים מובילים באופן יומיומי."
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[
+                      { title: "הנהלה ומטה (C-Level)", cases: ["ייעול אוטומטי של סיכומי ישיבות הנהלה ארוכות והפקת משימות.", "סיוע בגיבוש טיוטות ראשוניות מקיפות למסמכי מדיניות ותכנון אסטרטגי."] },
+                      { title: "שיווק, מכירות ופיתוח", cases: ["תמיכה מהירה ביצירת תוכן, עזרים, ותוצרי שיווק בסטנדרט ארגוני אחיד.", "מחקר מתחרים, שוק וניתוח מגמות בזמן אמת לצורך קבלת החלטות מהירות."] },
+                      { title: "תפעול, מערכות וכספים", cases: ["ניתוח מהיר של מפרטים טכניים מורכבים והשוואות ספקים ונתונים פיננסיים.", "סיוע בסטנדרטיזציה קלה של תיעוד תהליכים ונהלי עבודה פנימיים."] }
+                    ].map((dept, i) => (
+                      <FadeIn key={i} delay={i * 100} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover transition-colors">
+                        <div className="flex items-center gap-4 mb-5">
+                          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-[#0F5B9A] font-bold shrink-0">
+                            <FileText className="w-6 h-6" />
+                          </div>
+                          <h3 className="font-bold text-xl text-[#0B1F3B]">{dept.title}</h3>
+                        </div>
+                        <ul className="space-y-4">
+                          {dept.cases.map((c, j) => (
+                            <li key={j} className="text-gray-600 text-base flex gap-3 items-start">
+                              <span className="text-[#14B8A6] mt-1 shrink-0">•</span> 
+                              <span>{c}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </FadeIn>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION: Products & Services */}
+              <section id="products" className="py-24 bg-[#0B1F3B] text-white">
+                <div className="container mx-auto px-4 max-w-6xl">
+                  <FadeIn>
+                    <div className="text-center mb-16">
+                      <div className="inline-block bg-[#14B8A6]/20 text-[#14B8A6] font-bold px-4 py-1.5 rounded-full text-sm mb-6 border border-[#14B8A6]/30 uppercase tracking-wide">
+                        הפתרונות ללקוחות נורטרה
+                      </div>
+                      <h2 className="text-4xl md:text-5xl font-extrabold mb-6">לא הרצאות תיאורטיות. פרקטיקה עסקית.</h2>
+                      <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                        אנחנו לא מדברים על "העתיד". אנחנו בונים עבורכם את ההווה העסקי, עם פתרונות שחוסכים כסף, זמן וטעויות, ומותאמים במדויק לבשלות הדיגיטלית של הארגון שלכם.
+                      </p>
+                    </div>
+                  </FadeIn>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    
+                    {/* Product 1: Workshops */}
+                    <FadeIn delay={100} className="bg-white text-[#0B1F3B] rounded-2xl p-8 shadow-xl flex flex-col relative overflow-hidden card-hover group">
+                      <div className="absolute top-0 right-0 w-full h-2 bg-[#14B8A6]"></div>
+                      <div className="w-14 h-14 bg-teal-50 rounded-xl flex items-center justify-center mb-6 text-[#14B8A6] group-hover:bg-[#14B8A6] group-hover:text-white transition-colors">
+                        <Rocket className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-2xl font-extrabold mb-3">הכשרות וסדנאות Hands-on</h3>
+                      <p className="text-gray-600 mb-6 font-medium">לא עוד "הרצאת מדף". סדנאות מעשיות שמגיעות רק לאחר סקר מקדים לזיהוי הצרכים המדויקים של הצוות.</p>
+                      
+                      <div className="flex-grow">
+                        <h4 className="font-bold text-sm text-gray-400 mb-4 uppercase tracking-wider">התוצרים שתקבלו:</h4>
+                        <ul className="space-y-4 mb-8">
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#14B8A6] shrink-0 mt-0.5" />
+                            <span><strong>הכנה מקדימה:</strong> סקר מקדים לצוות לדיוק התכנים והאתגרים.</span>
+                          </li>
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#14B8A6] shrink-0 mt-0.5" />
+                            <span><strong>כלים מידיים:</strong> פרומפטים ותבניות שניתן ליישם מיד מחר בבוקר.</span>
+                          </li>
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#14B8A6] shrink-0 mt-0.5" />
+                            <span><strong>פוקוס מחלקתי:</strong> פתרון בעיות קונקרטיות של המחלקה (כספים, HR, תפעול).</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="mt-auto">
+                        <button 
+                          onClick={() => handleCalendarClick()}
+                          className="w-full bg-[#F6F8FB] hover:bg-[#0B1F3B] text-[#0B1F3B] hover:text-white font-bold py-3.5 px-4 rounded-lg transition-colors border border-gray-200 hover:border-[#0B1F3B] flex justify-center items-center gap-2"
+                        >
+                          <Calendar className="w-4 h-4"/> תיאום פגישה לבחינת סדנה
+                        </button>
+                        <button onClick={() => handleWhatsAppClick('היי טל, אשמח לשמוע פרטים על בניית סדנה פרקטית ומותאמת לארגון שלי.')} className="w-full mt-4 text-sm text-gray-500 hover:text-[#14B8A6] transition-colors flex justify-center items-center gap-1.5 font-medium">
+                          <MessageCircle className="w-4 h-4" /> או פניה מהירה בוואטסאפ
+                        </button>
+                      </div>
+                    </FadeIn>
+
+                    {/* Product 2: End-to-End Implementation */}
+                    <FadeIn delay={200} className="bg-gradient-to-br from-white to-blue-50 text-[#0B1F3B] rounded-2xl p-8 shadow-2xl flex flex-col relative overflow-hidden card-hover group border-2 border-[#F59E0B] transform md:-translate-y-4">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-[#F59E0B]/10 rounded-bl-full z-0"></div>
+                      
+                      <div className="inline-block bg-[#F59E0B] text-white font-bold px-4 py-1.5 rounded-full text-xs mb-4 w-max relative z-10 shadow-sm uppercase tracking-wide">
+                        המסלול האסטרטגי המומלץ
+                      </div>
+
+                      <div className="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mb-6 text-[#F59E0B] group-hover:bg-[#F59E0B] group-hover:text-white transition-colors relative z-10">
+                        <Layers className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-2xl font-extrabold mb-3 relative z-10">הטמעה רוחבית מקצה לקצה</h3>
+                      <p className="text-gray-600 mb-6 font-medium relative z-10">מזיהוי צווארי הבקבוק ועד לבניית שגרת עבודה חדשה. תהליך מובנה לאימוץ עמוק, בטוח ומדיד בארגון.</p>
+                      
+                      <div className="flex-grow relative z-10">
+                        <h4 className="font-bold text-sm text-gray-400 mb-4 uppercase tracking-wider">התוצרים שתקבלו:</h4>
+                        <ul className="space-y-4 mb-8">
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+                            <span><strong>מיפוי ובחירה:</strong> זיהוי ההזדמנויות (Use Cases) ובחירת הכלים הנכונים.</span>
+                          </li>
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+                            <span><strong>מדיניות סדורה:</strong> קביעת כללי מותר/אסור (Governance) לעבודה בטוחה.</span>
+                          </li>
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+                            <span><strong>שגרות ניהול:</strong> הטמעת תהליכים מנוהלים ומדידים בקרב העובדים וההנהלה.</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="mt-auto relative z-10">
+                        <button 
+                          onClick={() => handleCalendarClick()}
+                          className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-4 px-4 rounded-lg transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] flex justify-center items-center gap-2 text-lg"
+                        >
+                          <Calendar className="w-5 h-5"/> לתיאום פגישת ייעוץ לתהליך
+                        </button>
+                        <button onClick={() => handleWhatsAppClick('היי טל, מעוניין לשמוע על תהליך הטמעה רוחבי לארגון שלי.')} className="w-full mt-4 text-sm text-gray-500 hover:text-[#F59E0B] transition-colors flex justify-center items-center gap-1.5 font-medium">
+                          <MessageCircle className="w-4 h-4" /> או פניה מהירה בוואטסאפ
+                        </button>
+                      </div>
+                    </FadeIn>
+
+                    {/* Product 3: AI Development */}
+                    <FadeIn delay={300} className="bg-white text-[#0B1F3B] rounded-2xl p-8 shadow-xl flex flex-col relative overflow-hidden card-hover group">
+                      <div className="absolute top-0 right-0 w-full h-2 bg-[#0F5B9A]"></div>
+                      <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 text-[#0F5B9A] group-hover:bg-[#0F5B9A] group-hover:text-white transition-colors">
+                        <Bot className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-2xl font-extrabold mb-3">פיתוח כלים ואוטומציות AI</h3>
+                      <p className="text-gray-600 mb-6 font-medium">סביבות עבודה חכמות שעובדות בשבילכם 24/7. פיתוח "עובדים דיגיטליים" לייעול אגרסיבי של תהליכים.</p>
+                      
+                      <div className="flex-grow">
+                        <h4 className="font-bold text-sm text-gray-400 mb-4 uppercase tracking-wider">התוצרים שתקבלו:</h4>
+                        <ul className="space-y-4 mb-8">
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#0F5B9A] shrink-0 mt-0.5" />
+                            <span><strong>סוכנים חכמים (Agents):</strong> פיתוח בוטים פנימיים ארגוניים המותאמים לידע העסקי שלכם.</span>
+                          </li>
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#0F5B9A] shrink-0 mt-0.5" />
+                            <span><strong>אוטומציות עבודה:</strong> שילוב מנועי AI בתהליכי ליבה קיימים לחיסכון שעות עבודה.</span>
+                          </li>
+                          <li className="flex gap-3 text-gray-700 items-start">
+                            <CheckCircle2 className="w-5 h-5 text-[#0F5B9A] shrink-0 mt-0.5" />
+                            <span><strong>סביבות מותאמות:</strong> הגדרת ממשקי עבודה מאובטחים (Workspaces) לצוותים.</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="mt-auto">
+                        <button 
+                          onClick={() => handleCalendarClick()}
+                          className="w-full bg-[#F6F8FB] hover:bg-[#0B1F3B] text-[#0B1F3B] hover:text-white font-bold py-3.5 px-4 rounded-lg transition-colors border border-gray-200 hover:border-[#0B1F3B] flex justify-center items-center gap-2"
+                        >
+                          <Calendar className="w-4 h-4"/> תיאום שיחת התכנות טכנולוגית
+                        </button>
+                        <button onClick={() => handleWhatsAppClick('היי טל, מעוניין בבדיקת היתכנות לפיתוח אוטומציות וסוכני AI בארגון.')} className="w-full mt-4 text-sm text-gray-500 hover:text-[#0F5B9A] transition-colors flex justify-center items-center gap-1.5 font-medium">
+                          <MessageCircle className="w-4 h-4" /> או פניה מהירה בוואטסאפ
+                        </button>
+                      </div>
+                    </FadeIn>
+
+                  </div>
+
+                  <FadeIn delay={400}>
+                    <div className="text-center pt-10 border-t border-white/10 flex flex-col items-center">
+                      <p className="text-gray-300 mb-6 text-lg font-medium">לא בטוחים איזה מסלול נכון לשלב העסקי הנוכחי שלכם?</p>
+                      <ButtonPrimary onClick={() => setCurrentPage('offer')} className="mx-auto py-5 px-10 text-xl shadow-none hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] mb-4">
+                        <Calendar className="w-6 h-6"/> קבעו פגישת איפיון קצרה לבחירת הנתיב
+                      </ButtonPrimary>
+                    </div>
+                  </FadeIn>
+                </div>
+              </section>
+
+              {/* Section 4: Roadmap Steps */}
+              <section className="py-24 bg-[#F6F8FB] text-[#0B1F3B]">
+                <div className="container mx-auto px-4 max-w-5xl">
+                  <FadeIn>
+                    <div className="text-center mb-16">
+                      <div className="inline-block bg-[#14B8A6]/20 text-[#14B8A6] font-bold px-4 py-1.5 rounded-full text-sm mb-6 border border-[#14B8A6]/30 uppercase tracking-wide">
+                        הצעד הראשון ללקוחותינו
+                      </div>
+                      <h2 className="text-4xl md:text-5xl font-extrabold mb-6">מפגישת היכרות למפת דרכים</h2>
+                      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        אנחנו מאמינים בהתאמה, לא במכירה אגרסיבית. בשיחה אחת ממוקדת נבין יחד איפה הבינה המלאכותית תשרת אתכם עסקית, <strong className="text-[#0B1F3B]">ללא שום עלות או התחייבות מסחרית מראש.</strong>
+                      </p>
+                    </div>
+                  </FadeIn>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    {[
+                      { icon: Users, title: "לומדים את העסק שלכם", desc: "נשמע על המבנה הארגוני, המחלקות השונות, והאתגרים העסקיים המרכזיים שאתם והמנהלים חווים ביום-יום." },
+                      { icon: Map, title: "בונים מפת דרכים ראשונית", desc: "נסרטט יחד כיוון אסטרטגי ראשוני לאימוץ AI, תוך התייחסות לצווארי בקבוק ספציפיים שזיהינו." },
+                      { icon: Shield, title: "שמים דגש על בטיחות", desc: "נשוחח על מדיניות המידע בארגון, רגולציות פנימיות, ואיך מיישמים טכנולוגיה מתקדמת מבלי לחשוף מידע רגיש." },
+                      { icon: Target, title: "מספקים המלצה מעשית", desc: "תצאו עם הבנה ברורה של 'מה הצעד הבא' המומלץ עבורכם לבניית תהליכי עבודה בריאים, גם אם תבחרו ליישם זאת לבד." }
+                    ].map((item, i) => (
+                      <FadeIn key={i} delay={i * 150} className="bg-white border border-gray-100 p-8 rounded-xl hover:shadow-lg transition-all flex items-start gap-5 card-hover">
+                        <item.icon className="w-10 h-10 text-[#14B8A6] shrink-0 mt-0.5" />
+                        <div>
+                          <h3 className="font-bold text-xl mb-3 text-[#0B1F3B]">{item.title}</h3>
+                          <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </FadeIn>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Team / Authority (Tal Hakuki) */}
+              <section className="py-24 bg-[#F6F8FB] border-t border-gray-200/60">
+                 <div className="container mx-auto px-4 max-w-5xl">
+                    <SectionTitle title="המומחים מאחורי השותפות" subtitle="הטמעת AI בארגון דורשת הרבה יותר מאשר רק הבנה טכנולוגית טובה. היא דורשת הבנה עסקית ואנושית עמוקה שמגיעה משילוב הכוחות שלנו." />
+                    
+                    <FadeIn delay={100} className="bg-white p-8 md:p-14 rounded-3xl shadow-xl border border-gray-100 flex flex-col md:flex-row gap-10 items-center md:items-start max-w-4xl mx-auto hover:border-[#14B8A6] transition-colors">
+                      <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shrink-0 shadow-2xl border-4 border-[#F6F8FB] relative">
+                        <img 
+                          src="https://res.cloudinary.com/dhzuwoech/image/upload/v1770577527/unnamed_hmkldf.jpg" 
+                          alt="טל חקוקי - מנהל תחום GenAI" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-center md:text-right flex-grow">
+                        <div className="inline-block bg-teal-50 text-[#14B8A6] font-bold px-3 py-1 rounded-full text-xs mb-3 border border-teal-100">
+                          מוביל טרנספורמציה דיגיטלית ארגונית
+                        </div>
+                        <h3 className="font-extrabold text-3xl md:text-4xl text-[#0B1F3B] mb-2">טל חקוקי</h3>
+                        <p className="text-[#0F5B9A] font-bold mb-6 text-xl">מנהל תחום GenAI במרכז כנרת לחדשנות (KIC)</p>
+                        
+                        <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
+                          <p>
+                            טל מוביל את שיתוף הפעולה האסטרטגי עבור לקוחות נורטרה. הוא מגיע עם רקע עסקי וניהולי עשיר בהובלת תהליכי טרנספורמציה דיגיטלית מורכבים בארגונים. הוא מבין לעומק שהסוד להטמעה מוצלחת באמת הוא קודם כל <strong className="text-[#0B1F3B]">המרכיב האנושי</strong>.
+                          </p>
+                          <p>
+                            טל בעל ניסיון ניהולי מוכח בשלושת המגזרים: <strong className="text-[#0B1F3B]">העסקי, החברתי והממשלתי</strong>. היכרות רוחבית וייחודית זו מאפשרת לו לנתח את הצרכים האמיתיים של הארגון בראייה הוליסטית של 360 מעלות, ולבנות אסטרטגיית אימוץ AI נכונה, בטוחה אבטחתית וארוכת טווח.
+                          </p>
+                        </div>
+                      </div>
+                    </FadeIn>
+                 </div>
+              </section>
+
+              {/* Gallery / Field Experience */}
+              <section className="py-24 bg-white">
+                <div className="container mx-auto px-4 max-w-6xl">
+                  <SectionTitle 
+                    title="מובילים את מהפכת ה-AI מהשטח" 
+                    subtitle="מאות סדנאות, הרצאות ותהליכי ליווי אסטרטגיים בארגונים המובילים במשק הישראלי."
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <FadeIn delay={100} className="rounded-2xl overflow-hidden shadow-lg h-72 gallery-container cursor-pointer border border-gray-100">
+                      <img src="https://res.cloudinary.com/dhzuwoech/image/upload/v1770584538/580669370_10239655425541264_8727551209985263451_n_ttstau.jpg" alt="הרצאה וסדנת AI בארגון - טל חקוקי" className="w-full h-full object-cover gallery-img" />
+                    </FadeIn>
+                    <FadeIn delay={200} className="rounded-2xl overflow-hidden shadow-lg h-72 gallery-container cursor-pointer border border-gray-100">
+                      <img src="https://res.cloudinary.com/dhzuwoech/image/upload/v1770584537/506044707_10236996644873409_7602400213596673667_n_grqpzk.jpg" alt="הטמעת AI רוחבית - כנסים והדרכות" className="w-full h-full object-cover gallery-img" />
+                    </FadeIn>
+                    <FadeIn delay={300} className="rounded-2xl overflow-hidden shadow-lg h-72 gallery-container cursor-pointer border border-gray-100">
+                      <img src="https://res.cloudinary.com/dhzuwoech/image/upload/v1770584537/518161840_10237748613112145_6322064407879389765_n_a2uemu.jpg" alt="פיתוח אסטרטגיית אימוץ AI" className="w-full h-full object-cover gallery-img" />
+                    </FadeIn>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 9: FAQ */}
+              <section id="governance" className="py-24 bg-[#F6F8FB]">
+                <div className="container mx-auto px-4 max-w-3xl">
+                  <SectionTitle title="שאלות נפוצות של הנהלות" />
+                  
+                  <div className="space-y-4">
+                    {[
+                      {
+                        q: "איך אתם מתמודדים עם סוגיית בטיחות המידע בארגון?",
+                        a: "זהו השלב החשוב והראשון ביותר בתהליך. אנחנו עובדים עם גופי ה-IT ואבטחת המידע בארגון, מגדירים רמות מידע ברורות (מה מותר ומה אסור לחלוטין להעלות לכלים פומביים) ומתאימים את אסטרטגיית העבודה וסביבת הכלים בהתאם לרגולציה המחמירה של הארגון שלכם, לפני שבכלל מתחילים הטמעה לעובדים."
+                      },
+                      {
+                        q: "האם אנו מחויבים לתהליך ארוך ויקר מראש?",
+                        a: "ממש לא. שיחת האיפיון הראשונית מוענקת ללא עלות ללקוחות נורטרה ומטרתה לבדוק התאמה הדדית ולסרטט מפת דרכים אסטרטגית מומלצת. לאחר מכן, תוכלו לקבל החלטה מושכלת כיצד ובאיזה קצב (אם בכלל) תרצו להתקדם."
+                      },
+                      {
+                        q: "מה אנו נדרשים להכין לקראת שיחת הייעוץ?",
+                        a: "הדבר המרכזי שנדרש הוא היכרות טובה עם האתגרים העסקיים במחלקה או בארגון שלכם. אנו ננווט את השיחה ונשאל את השאלות המכוונות כדי להבין באמת היכן כלי AI יכולים לחסוך זמן וכסף, ולאן כדאי לנתב את מאמצי החדשנות."
+                      }
+                    ].map((faq, i) => (
+                      <FadeIn key={i} delay={i * 100}>
+                        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-shadow hover:shadow-md">
+                          <button 
+                            className="w-full text-right p-6 font-bold text-[#0B1F3B] flex justify-between items-center focus:outline-none text-lg"
+                            onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                          >
+                            {faq.q}
+                            <ChevronDown className={`w-5 h-5 text-[#14B8A6] transition-transform shrink-0 mr-4 ${activeFaq === i ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeFaq === i && (
+                            <div className="p-6 pt-0 text-gray-600 border-t border-gray-50 bg-gray-50/50 animate-fadeIn leading-relaxed text-base">
+                              {faq.a}
+                            </div>
+                          )}
+                        </div>
+                      </FadeIn>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Final CTA */}
+              <section className="py-24 bg-gradient-primary text-center">
+                <div className="container mx-auto px-4 max-w-4xl">
+                  <FadeIn>
+                    <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight">
+                      לקוחות נורטרה, מוכנים לבדוק איך AI ישרת את הארגון שלכם?
+                    </h2>
+                    <div className="flex flex-col items-center justify-center gap-5 float-anim">
+                      <ButtonPrimary onClick={() => setCurrentPage('offer')} className="text-xl md:text-2xl px-10 py-6 w-full md:w-auto">
+                        <Calendar className="w-7 h-7" /> לתיאום פגישת איפיון ביומן
+                      </ButtonPrimary>
+                      <button onClick={() => handleWhatsAppClick()} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 font-medium text-lg mt-2">
+                        <MessageCircle className="w-5 h-5" /> מעדיפים קודם לשלוח הודעת וואטסאפ? לחצו כאן
+                      </button>
+                    </div>
+                  </FadeIn>
+                </div>
+              </section>
+            </>
+          );
+
+          return (
+            <>
+              <style>{customStyles}</style>
+              
+              {/* Sticky Header */}
+              <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+                <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+                  
+                  {/* Co-Branded Logo */}
+                  <div 
+                    className="flex items-center gap-4 cursor-pointer group"
+                    onClick={() => handleNavClick('home-top')}
+                  >
+                    <img src={LOGOS.norterra} alt="Norterra Logo" className="h-8 md:h-10 object-contain hover:scale-105 transition-transform" />
+                    <span className="text-gray-300 text-2xl font-light hidden sm:block">|</span>
+                    <img src={LOGOS.kic} alt="KIC Logo" className="h-10 md:h-12 object-contain hover:scale-105 transition-transform hidden sm:block" />
+                  </div>
+
+                  {/* Desktop Nav */}
+                  <nav className="hidden lg:flex items-center gap-7">
+                    <button onClick={() => handleNavClick('home-top')} className="text-gray-600 hover:text-[#14B8A6] font-medium transition-colors">ראשי</button>
+                    <button onClick={() => handleNavClick('products')} className="text-[#0B1F3B] font-bold hover:text-[#14B8A6] transition-colors">מסלולי פעילות</button>
+                    <button onClick={() => handleNavClick('projects')} className="text-gray-600 hover:text-[#14B8A6] font-medium transition-colors">יישומים בארגון</button>
+                    <button onClick={() => handleNavClick('governance')} className="text-gray-600 hover:text-[#14B8A6] font-medium transition-colors">FAQ</button>
+                    
+                    <div className="flex items-center gap-2 mr-2">
+                      <ButtonPrimary onClick={() => setCurrentPage('offer')} className="py-2.5 px-6 text-sm">
+                        <Calendar className="w-4 h-4"/> תיאום פגישה
+                      </ButtonPrimary>
+                      <button 
+                        onClick={() => handleWhatsAppClick()} 
+                        className="flex items-center justify-center w-11 h-11 bg-teal-50 text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white rounded-lg transition-colors border border-teal-100 shadow-sm" 
+                        title="שלחו הודעת וואטסאפ"
+                      >
+                        <MessageCircle className="w-5 h-5"/>
+                      </button>
+                    </div>
+                  </nav>
+
+                  {/* Mobile Menu Toggle */}
+                  <button className="lg:hidden text-[#0B1F3B] p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    {isMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+                  </button>
+
+                </div>
+
+                {/* Mobile Nav Dropdown */}
+                {isMenuOpen && (
+                  <div className="lg:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-xl py-6 px-6 flex flex-col gap-5 animate-fadeIn">
+                    <button onClick={() => handleNavClick('home-top')} className="text-right text-gray-800 font-medium p-2 hover:bg-gray-50 rounded text-lg">ראשי</button>
+                    <button onClick={() => handleNavClick('products')} className="text-right text-gray-800 font-bold p-2 hover:bg-gray-50 rounded text-lg">מסלולי פעילות</button>
+                    <button onClick={() => handleNavClick('projects')} className="text-right text-gray-800 font-medium p-2 hover:bg-gray-50 rounded text-lg">יישומים מרכזיים בארגון</button>
+                    <button onClick={() => handleNavClick('governance')} className="text-right text-gray-800 font-medium p-2 hover:bg-gray-50 rounded text-lg">אבטחת מידע וניהול סיכונים</button>
+                    <div className="flex flex-col gap-3 mt-2">
+                      <ButtonPrimary onClick={() => setCurrentPage('offer')} className="w-full text-lg py-4">
+                        <Calendar className="w-5 h-5"/> תיאום פגישה ביומן
+                      </ButtonPrimary>
+                      <button onClick={() => handleWhatsAppClick()} className="w-full bg-teal-50 text-[#14B8A6] font-medium py-3 rounded-lg border border-teal-100 flex justify-center items-center gap-2">
+                        <MessageCircle className="w-5 h-5"/> או שלחו לנו וואטסאפ
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </header>
+
+              {/* Main Content Area */}
+              <main className="min-h-screen">
+                {currentPage === 'home' && <HomeView />}
+                {currentPage === 'offer' && <OfferView />}
+              </main>
+
+              {/* Footer */}
+              <footer className="bg-[#0B1F3B] text-gray-400 py-16 border-t border-white/10">
+                <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
+                  <div className="md:col-span-2">
+                    <div className="flex items-center gap-6 mb-6 bg-white/5 p-4 rounded-xl w-max">
+                      <img src={LOGOS.norterra} alt="Norterra Logo" className="h-10 object-contain brightness-0 invert opacity-90" />
+                      <span className="text-gray-500 text-xl font-light">|</span>
+                      <img src={LOGOS.kic} alt="KIC Logo" className="h-12 object-contain brightness-0 invert opacity-90" />
+                    </div>
+                    <p className="max-w-md text-gray-400 leading-relaxed text-base">מובילים את טרנספורמציית הבינה המלאכותית (GenAI) בארגונים. פעילות משותפת מבית נורטרה ומרכז כנרת לחדשנות (KIC). אנו משלבים חדשנות טכנולוגית יחד עם הבנה עסקית עמוקה.</p>
+                  </div>
+                  <div>
+                     <h4 className="text-white font-bold mb-6 text-lg">אסטרטגיה וקישורים</h4>
+                     <ul className="space-y-3 text-base">
+                       <li><button onClick={() => handleNavClick('home-top')} className="hover:text-[#14B8A6] transition-colors">עמוד ראשי</button></li>
+                       <li><button onClick={() => handleNavClick('products')} className="hover:text-[#14B8A6] transition-colors">מסלולי פעילות</button></li>
+                       <li><button onClick={() => handleNavClick('projects')} className="hover:text-[#14B8A6] transition-colors">הזדמנויות עסקיות בארגון</button></li>
+                     </ul>
+                  </div>
+                  <div>
+                     <h4 className="text-white font-bold mb-6 text-lg">יצירת קשר ושיתופי פעולה</h4>
+                     <ul className="space-y-3 text-base">
+                       <li>טל חקוקי - מנהל תחום GenAI</li>
+                       <li>שיתוף פעולה נורטרה-כנרת</li>
+                       <li className="pt-2">
+                         <button onClick={() => setCurrentPage('offer')} className="text-[#F59E0B] font-bold hover:text-white transition-colors flex items-center gap-2">
+                           <Calendar className="w-4 h-4"/> תיאום פגישת היכרות
+                         </button>
+                       </li>
+                       <li className="pt-2 border-t border-white/10 mt-4">
+                         <button onClick={() => handleWhatsAppClick('היי טל, הגעתי דרך האתר המשותף. אשמח ליצור קשר ישיר.')} className="text-[#14B8A6] hover:text-white transition-colors flex items-center gap-2 font-medium">
+                           <MessageCircle className="w-4 h-4"/> יצירת קשר בוואטסאפ
+                         </button>
+                       </li>
+                     </ul>
+                  </div>
+                </div>
+                <div className="container mx-auto px-4 mt-16 pt-8 border-t border-white/10 text-center flex flex-col items-center justify-center">
+                  <p className="text-gray-500">© {new Date().getFullYear()} הפעילות המשותפת של נורטרה ומרכז כנרת לחדשנות. כל הזכויות שמורות.</p>
+                </div>
+              </footer>
+            </>
+          );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
